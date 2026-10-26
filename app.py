@@ -15,6 +15,127 @@ from dashboard import (
 )
 
 
+# PAGE CONFIGURATION — must come before other Streamlit commands
+st.set_page_config(
+    page_title="Carbon Footprint Calculator",
+    page_icon="🌱",
+    layout="wide"
+)
+
+# ECO-FRIENDLY UI STYLING
+
+# ECO-FRIENDLY UI STYLING
+st.markdown("""
+<style>
+.stApp {
+    background:
+        radial-gradient(ellipse at top, #ffffff 0%, transparent 55%),
+        linear-gradient(135deg, #eef8e9, #e4f3e5, #f5f9ed);
+    color: #244d3e;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.block-container {
+    max-width: 1100px;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+h1, h2, h3 {
+    color: #176247 !important;
+    font-weight: 700 !important;
+}
+
+.eco-heading {
+    text-align: center;
+    padding: 10px 0 20px;
+}
+
+.eco-heading h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    margin-bottom: 8px;
+}
+
+.eco-heading p {
+    color: #547767;
+    font-size: 17px;
+}
+
+[data-testid="stForm"],
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #dcebdd;
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(29, 78, 55, 0.09);
+}
+
+.stTextInput input,
+.stNumberInput input,
+.stDateInput input {
+    border-radius: 11px;
+    min-height: 44px;
+    border-color: #cfe2d5;
+}
+
+.stSelectbox [data-baseweb="select"] > div {
+    border-radius: 11px;
+}
+
+.stButton > button,
+.stFormSubmitButton > button {
+    background: linear-gradient(135deg, #167650, #29a875);
+    color: white;
+    border: none;
+    border-radius: 11px;
+    min-height: 46px;
+    font-weight: 650;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background: linear-gradient(135deg, #105d3d, #21865d);
+    color: white;
+    border: none;
+    box-shadow: 0 5px 16px rgba(23, 107, 77, 0.18);
+}
+
+[data-testid="stMetric"] {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #dcebdd;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 5px 18px rgba(29, 78, 55, 0.05);
+}
+
+[data-testid="stSidebar"] {
+    background: #e7f2e6;
+    border-right: 1px solid #d6e6d7;
+}
+
+[data-testid="stAlert"] {
+    border-radius: 12px;
+}
+
+hr {
+    border-color: #d5e5d7;
+}
+
+.eco-footer {
+    text-align: center;
+    color: #547767;
+    padding: 28px 0 8px;
+    font-size: 14px;
+}
+
+@media (max-width: 640px) {
+    .block-container {
+        padding: 1rem;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 # =========================================================
 # DATABASE CONNECTION
 # =========================================================
@@ -47,11 +168,7 @@ def close_database_resources(cursor=None, connection=None):
 # PAGE CONFIGURATION
 # =========================================================
 
-st.set_page_config(
-    page_title="Carbon Footprint Calculator",
-    page_icon="🌱",
-    layout="wide"
-)
+
 
 
 # =========================================================
@@ -74,8 +191,13 @@ if "user_name" not in st.session_state:
 
 if not st.session_state.logged_in:
 
-    st.title("🌱 Carbon Footprint Calculator")
-    st.write("Calculate and monitor your daily carbon footprint.")
+    st.markdown("""
+    <div class="eco-heading">
+        <h1>🌱 Carbon Footprint Calculator</h1>
+        <p>Calculate and monitor your daily carbon footprint.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
     st.divider()
 
     option = st.radio(
@@ -90,7 +212,10 @@ if not st.session_state.logged_in:
 
     if option == "Login":
 
-        st.header("🔐 Login")
+        st.markdown(
+            "<h2 style='text-align:left;'>🔐 Login</h2>",
+            unsafe_allow_html=True
+        )
 
         email = st.text_input(
             "Email",
@@ -103,7 +228,7 @@ if not st.session_state.logged_in:
             key="login_password"
         )
 
-        if st.button("Login", use_container_width="stretch"):
+        if st.button("Login", width="stretch"):
 
             if not email.strip() or not password:
                 st.error("Please enter email and password.")
@@ -180,7 +305,7 @@ if not st.session_state.logged_in:
             key="confirm_password"
         )
 
-        if st.button("Create Account", use_container_width="stretch"):
+        if st.button("Create Account", width="stretch"):
 
             if not name.strip() or not email.strip():
                 st.error("Please enter your name and email.")
@@ -234,6 +359,13 @@ if not st.session_state.logged_in:
 
                 finally:
                     close_database_resources(cursor, connection)
+    # FOOTER — displayed on the Login/Register page
+    st.markdown("""
+    <div class="eco-footer">
+    🌿 Small steps. Lower emissions. Better future.
+    </div>
+    """, unsafe_allow_html=True)
+
 
 
 # =========================================================
@@ -241,7 +373,7 @@ if not st.session_state.logged_in:
 # =========================================================
 
 else:
-
+    
     # -----------------------------------------------------
     # SIDEBAR AND LOGOUT
     # -----------------------------------------------------
@@ -411,7 +543,7 @@ else:
 
     if st.button(
         "🌱 Calculate Carbon Footprint",
-        use_container_width="stretch"
+        width="stretch"
     ):
 
         total = (
@@ -676,7 +808,7 @@ else:
                 }
             )
 
-            st.plotly_chart(fig, use_container_width="stretch")
+            st.plotly_chart(fig, width="stretch")
 
             # ---------------------------------------------
             # SUSTAINABLE RECOMMENDATION
